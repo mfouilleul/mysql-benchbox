@@ -1,0 +1,46 @@
+body{
+    background-color: #fff;
+    color: #333;
+}
+
+.clear{
+    clear: both;
+}
+
+th:hover {
+    cursor: pointer;
+}
+
+h1 {
+    color: #ff5b5b;
+}
+
+.filename {
+    color: #ff5b5b;  
+    text-decoration: none;
+}
+
+.filename:hover {
+    color: #5badff;  
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#charts{
+    display: none;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+#charts .show_hide{    
+    float: right;
+    color: #ff5b5b;
+    opacity: 0.8;
+}
+
+#charts .show_hide:hover{    
+    cursor: pointer;
+    opacity: 1;
+}
