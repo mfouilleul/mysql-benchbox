@@ -11,6 +11,7 @@ $(document).ready(function(){
         });
 
 	$(".filename").click(function(){
+		$("#searchInput").val("");
 		getCharts($(this).closest('tr').attr("id"));
 	});
 });
