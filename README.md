@@ -1,18 +1,25 @@
-Welcome to Riak.
+Welcome to BenchBox.
 
-* Overview
+Overview
+========
 
   Automize your MySQL benchmarks with BenchBox.
   
   Below, you will find the "quick start" directions for setting up and
   using BenchBox.
   
-* Quick Start
+![Browser](https://github.com/mfouilleul/benchbox/screenshots/1.png)
+
+
+![Charts](https://github.com/mfouilleul/benchbox/screenshots/2.png)
+
+Quick Start
+===========
 
  This section assumes that you have copy of the BenchBox source tree. To get
   started, you need to:
-  1. Install Prereqs
-  2. Generate some benchmark files with BenchBox
-  3. Browse your benchmarks with the BenchBox GUI
-  
+  * Install Prereqs
+  * Generate some benchmark files with BenchBox
+  * Browse your benchmarks with the BenchBox GUI
+
 Authored by Maxime FOUILLEUL
