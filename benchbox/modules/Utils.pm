@@ -45,4 +45,16 @@ sub printHelp{
     print "\n";
 }
 
+sub getAVG{
+    my ($self, $list) = @_;
+    my $avg;
+    foreach(@{$list}){
+        $avg += $_;
+    }
+    
+    $avg = $avg / (scalar @$list);
+    
+    return $avg;
+}
+
 1;

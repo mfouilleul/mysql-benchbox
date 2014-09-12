@@ -11,31 +11,31 @@
     <body>
         <div class="container">
             <h1>Bench<b>Box</b></h1>
-            <div id="filter">
+            <!--<div id="filter">
                 <form role="form">
                     <div class="form-group">
                       <input type="text" class="form-control" id="searchInput" placeholder="Type To Filter">
                     </div>
                 </form>
-            </div>
+            </div>-->
             <div id="charts">
                 <div class="row">
                     <div class="col-md-6">
-                        <strong> Transactions/s </strong>
+                        <p><strong> Transactions/s </strong></p>
                         <canvas id="tps" class="graph" width="550" heigth="400"></canvas>
                     </div>
                     <div class="col-md-6">
-                        <strong> Response Time (ms) </strong>
+                        <p><strong> Response Time (ms) </strong></p>
                         <canvas id="rt" class="graph" width="550" heigth="400"></canvas>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <strong> Reads/s </strong>
+                        <p><strong> Reads/s </strong></p>
                         <canvas id="rds" class="graph" width="550" heigth="400"></canvas>
                     </div>
                     <div class="col-md-6">
-                        <strong> Writes/s </strong>
+                        <p><strong> Writes/s </strong></p>
                         <canvas id="wrs" class="graph" width="550" heigth="400"></canvas>
                     </div>
                 </div>

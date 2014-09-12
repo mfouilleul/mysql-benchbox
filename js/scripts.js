@@ -23,71 +23,160 @@ function oneFile(filename){
 		var rds = document.getElementById("rds").getContext("2d");
 		var wrs = document.getElementById("wrs").getContext("2d");
 		
-		if(json.info.name){
-			label = json.info.name
-		}else{
-			label = json.info.filename
+		var options = {
+			pointDot : false,
 		}
 		
-		var dataset_red = {
-			fillColor: "rgba(255,168,168,0.2)",
-			strokeColor: "rgba(255,168,168,1)",
-			pointColor: "rgba(255,91,91,1)",
-			pointStrokeColor: "#fff",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "rgba(255,66,66,1)"
-		};
-		var dataset_blue = {
-			fillColor: "rgba(142,199,255,0.2)",
-			strokeColor: "rgba(142,199,255,1)",
-			pointColor: "rgba(91,173,255,1)",
-			pointStrokeColor: "#fff",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "rgba(40,148,255,1)"
-		};
-		var dataset_green = {
-			fillColor: "rgba(75,215,134,0.2)",
-			strokeColor: "rgba(75,215,134,1)",
-			pointColor: "rgba(39,174,96,1)",
-			pointStrokeColor: "#fff",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "rgba(30,132,173,1)"
-		};
-		var dataset_yellow = {
-			fillColor: "rgba(252,215,95,0.2)",
-			strokeColor: "rgba(252,215,95,1)",
-			pointColor: "rgba(250,196,20,1)",
-			pointStrokeColor: "#fff",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "rgba(214,165,5,1)"
-		};
-		
-		var data = {
+		// TPS
+		var data_tps = {
 			labels: json.info.threads,
 			datasets: [ ]
 		};
 		
-		var options = { }
+		// RDS
+		var data_rds = {
+			labels: json.info.threads,
+			datasets: [ ]
+		};
 		
-		data.datasets[0] = dataset_red;
-		data.datasets[0].label = label;
-		data.datasets[0].data = json.bench.tps;
-		var myLineChart_tps = new Chart(tps).Line(data, options);
+		// WRS
+		var data_wrs = {
+			labels: json.info.threads,
+			datasets: [ ]
+		};
 		
-		data.datasets[0] = dataset_blue;
-		data.datasets[0].label = label;
-		data.datasets[0].data = json.bench.rt;
-		var myLineChart_rt = new Chart(rt).Line(data, options);
+		// RT
+		var data_rt = {
+			labels: json.info.threads,
+			datasets: [ ]
+		};
 		
-		data.datasets[0] = dataset_green;
-		data.datasets[0].label = label;
-		data.datasets[0].data = json.bench.rds;
-		var myLineChart_rds = new Chart(rds).Line(data, options);
+		// FULL
+		for (v = 0; v < json.info.ckpts; v++) {
+			// TPS
+			data_tps.datasets[v] = {
+				fillColor: "rgba(255,168,168,0.1)",
+				strokeColor: "rgba(255,168,168,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(255,66,66,1)"
+			};
+			data_tps.datasets[v].label = v + 1;
+			data_tps.datasets[v].data = [];
+			$.each(json.info.threads, function( i, threads_value ) {
+				var value = json.bench.tps[json.info.threads[i]].full[v];
+				data_tps.datasets[v].data.push(value);
+			});
+			
+			// RDS
+			data_rds.datasets[v] = {
+				fillColor: "rgba(142,199,255,0.1)",
+				strokeColor: "rgba(142,199,255,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(40,148,255,1)"
+			};
+			data_rds.datasets[v].label = v + 1;
+			data_rds.datasets[v].data = [];
+			$.each(json.info.threads, function( i, threads_value ) {
+				var value = json.bench.rds[json.info.threads[i]].full[v];
+				data_rds.datasets[v].data.push(value);
+			});
+			
+			// WRS
+			data_wrs.datasets[v] = {
+				fillColor: "rgba(75,215,134,0.1)",
+				strokeColor: "rgba(75,215,134,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(30,132,173,1)"
+			};
+			data_wrs.datasets[v].label = v + 1;
+			data_wrs.datasets[v].data = [];
+			$.each(json.info.threads, function( i, threads_value ) {
+				var value = json.bench.wrs[json.info.threads[i]].full[v];
+				data_wrs.datasets[v].data.push(value);
+			});
+			// RT
+			data_rt.datasets[v] = {
+				fillColor: "rgba(252,215,95,0.1)",
+				strokeColor: "rgba(252,215,95,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(214,165,5,1)"
+			};
+			data_rt.datasets[v].label = v + 1;
+			data_rt.datasets[v].data = [];
+			$.each(json.info.threads, function( i, threads_value ) {
+				var value = json.bench.rt[json.info.threads[i]].full[v];
+				data_rt.datasets[v].data.push(value);
+			});
+		}
 		
-		data.datasets[0] = dataset_yellow;
-		data.datasets[0].label = label;
-		data.datasets[0].data = json.bench.wrs;
-		var myLineChart_wrs = new Chart(wrs).Line(data, options);
+		// AVG
+		// TPS
+		data_tps.datasets[v] = {
+			fillColor: "rgba(255,168,168,0)",
+			strokeColor: "rgba(255,168,168,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(255,66,66,1)"
+		};
+		data_tps.datasets[v].label = v + 1;
+		data_tps.datasets[v].data = [];
+		$.each(json.info.threads, function( i, threads_value ) {
+			var value = json.bench.tps[json.info.threads[i]].avg;
+			data_tps.datasets[v].data.push(value);
+		});
+		
+		// RDS
+		data_rds.datasets[v] = {
+			fillColor: "rgba(142,199,255,0)",
+			strokeColor: "rgba(142,199,255,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(40,148,255,1)"
+		};
+		data_rds.datasets[v].label = v + 1;
+		data_rds.datasets[v].data = [];
+		$.each(json.info.threads, function( i, threads_value ) {
+			var value = json.bench.rds[json.info.threads[i]].avg;
+			data_rds.datasets[v].data.push(value);
+		});
+		
+		// WRS
+		data_wrs.datasets[v] = {
+			fillColor: "rgba(75,215,134,0)",
+			strokeColor: "rgba(75,215,134,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(30,132,173,1)"
+		};
+		data_wrs.datasets[v].label = v + 1;
+		data_wrs.datasets[v].data = [];
+		$.each(json.info.threads, function( i, threads_value ) {
+			var value = json.bench.wrs[json.info.threads[i]].avg;
+			data_wrs.datasets[v].data.push(value);
+		});
+		// RT
+		data_rt.datasets[v] = {
+			fillColor: "rgba(252,215,95,0)",
+			strokeColor: "rgba(252,215,95,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(214,165,5,1)"
+		};
+		data_rt.datasets[v].label = v + 1;
+		data_rt.datasets[v].data = [];
+		$.each(json.info.threads, function( i, threads_value ) {
+			var value = json.bench.rt[json.info.threads[i]].avg;
+			data_rt.datasets[v].data.push(value);
+		});
+			
+		var myLineChart_tps = new Chart(tps).Line(data_tps, options);
+		var myLineChart_rds = new Chart(rds).Line(data_rds, options);
+		var myLineChart_wrs = new Chart(wrs).Line(data_wrs, options);
+		var myLineChart_rt = new Chart(rt).Line(data_rt, options);
 		
 		$("#charts").show();
         });
