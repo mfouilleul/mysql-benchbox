@@ -200,8 +200,15 @@ if($options){
 my $numThreads_str = $cnf_file->{benchbox}->{num_threads};
 my @numThreads = ();
 if($numThreads_str){
-    Utils->trimText(\$numThreads_str);
-    @numThreads = split(/,/, $numThreads_str);
+    if ($numThreads_str =~ /\[(\d+)\.\.(\d+)\]/) {
+        for (my $i = $1; $i <= $2; $i++){
+            push(@numThreads, $i);
+        }
+    }else{
+        Utils->trimText(\$numThreads_str);
+        @numThreads = split(/,/, $numThreads_str);
+    }
+    
 }else{
     $numThreads[0] = 1
 }
