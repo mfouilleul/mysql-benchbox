@@ -224,12 +224,16 @@ if ($option_action eq "run") {
     my $output_file = "$output/" . Utils->getNowCondensed() . "_" . $db_host . "_" . $db_port . $option_name_tr . ".json";
     
     my $OUTPUT;
+    $OUTPUT->{info}->{sysbench} = $sysbench_version;
     $OUTPUT->{info}->{name} = $option_name;
     $OUTPUT->{info}->{filename} = $output_file;
     $OUTPUT->{info}->{hostname} = $db_host;
     $OUTPUT->{info}->{port} = $db_port;
     $OUTPUT->{info}->{datetime} = Utils->getNow();
     $OUTPUT->{info}->{threads} = \@numThreads;
+    $OUTPUT->{info}->{read_only} = $read_only;
+    $OUTPUT->{info}->{report_interval} = $report_interval;
+    $OUTPUT->{info}->{max_time} = $max_time;
     
     my ($tps, $rds, $wrs, $rt);
     

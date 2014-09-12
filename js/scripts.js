@@ -1,22 +1,37 @@
 $(document).ready(function(){
 	
-	$(".filename").click(function(){
-		oneFile($(this).closest('tr').attr("id"));
-	});
-	
-	$("input[type=checkbox]").on( "click", function(){
-		var filenames = [];
-		$("input:checked").each(function(){
-			filenames.push($(this).closest('tr').attr("id"));
+	$("#searchInput").keyup(function() {
+		$("#context").hide();
+		$("#charts").hide();
+		var rows = $("#files tbody").find("tr").hide();
+		var data = this.value.split(" ");
+		$.each(data, function(i, v) {
+			rows.filter(":contains('" + v + "')").show();
 		});
-		someFiles(filenames);
+        });
+
+	$(".filename").click(function(){
+		getCharts($(this).closest('tr').attr("id"));
 	});
-	
 });
 
-function oneFile(filename){
+function getCharts(filename){
 	
 	$.getJSON('./json/' + filename, function(json) {
+		
+		$("#context").show();
+		
+		$("#context_table > tbody").empty();
+		$("#context_table > tbody").append("<tr><td>Name</td><td>" + json.info.name + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>JSON</td><td>" + json.info.filename + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>SysBench Version</td><td>" + json.info.sysbench + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Date</td><td>" + json.info.datetime + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Hostname</td><td>" + json.info.hostname + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Port</td><td>" + json.info.port + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Threads</td><td>" + json.info.threads.toString() + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Read Only</td><td>" + json.info.read_only + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Report Interval (in sec)</td><td>" + json.info.report_interval + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Max Time (in sec)</td><td>" + json.info.max_time + "</td></tr>");
 		
         	var tps = document.getElementById("tps").getContext("2d");
 		var rt = document.getElementById("rt").getContext("2d");

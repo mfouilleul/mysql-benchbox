@@ -11,13 +11,13 @@
     <body>
         <div class="container">
             <h1>Bench<b>Box</b></h1>
-            <!--<div id="filter">
+            <div id="filter">
                 <form role="form">
                     <div class="form-group">
                       <input type="text" class="form-control" id="searchInput" placeholder="Type To Filter">
                     </div>
                 </form>
-            </div>-->
+            </div>
             <div id="charts">
                 <div class="row">
                     <div class="col-md-6">
@@ -40,8 +40,24 @@
                     </div>
                 </div>
             </div>
+            <div id="context">
+                <table id="context_table" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Info
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
             <div id="list">
-                <table class="table">
+                <table id="files" class="table">
                     <thead>
                         <tr>
                             <th>

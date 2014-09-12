@@ -44,3 +44,7 @@ h1 {
     cursor: pointer;
     opacity: 1;
 }
+
+#context{
+    display: none;
+}
