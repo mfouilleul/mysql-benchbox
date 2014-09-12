@@ -42,18 +42,25 @@ my $option_action = undef;
 my $option_name = undef;
 my $option_verbose = undef;
 my $option_version = undef;
+my $option_help = undef;
 
 GetOptions (
     'c|config=s' => \$option_config,
     'a|action=s' => \$option_action,
     'v|verbose' => \$option_verbose,
     'version' => \$option_version,
-    'n|name=s' => \$option_name
+    'n|name=s' => \$option_name,
+    'h|help' => \$option_help
 )or die exit(1);
 
 if($option_version){
     print "BenchBox v$version\n";
     exit 0;
+}
+
+if($option_help){
+    Utils->printHelp($version);
+    exit 1;
 }
 
 if($option_action){
