@@ -1,7 +1,7 @@
 # About
 
 BenchBox allows you to automize, archive and visualize your MySQL benchmarks did with SysBench (oltp tests).
-It is composed by a set of Perl scripts and a Web Interface. The SysBench versions currently supported by BenchBox are 0.4x and 0.5.
+It is composed by a set of Perl scripts ("backend") and a Web Interface. The SysBench versions currently supported by BenchBox are 0.4x and 0.5.
 
 ![Charts](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/2.png)
 
@@ -12,13 +12,14 @@ SysBench is written in C and released under the GNU GPL v2 licence.
 
 # Download
 
-BenchBox is released as open source and is available at [GitHub](https://github.com/mfouilleul/benchbox). Find official releases in [https://github.com/mfouilleul/benchbox/releases](https://github.com/mfouilleul/benchbox/releases).
+BenchBox is released as open source and is available at [GitHub](https://github.com/mfouilleul/benchbox).
+Find official releases in [https://github.com/mfouilleul/benchbox/releases](https://github.com/mfouilleul/benchbox/releases).
 
 # Requirements
 
 BenchBox is based on SysBench, the versions currently supported are SysBench 0.4x and SysBench 0.5 (Recommended).
 
-Prerequisites for BenchBox Scripts:
+Prerequisites for BenchBox "backend":
 - SysBench 0.4x or higher
 - Perl v5.8 or higher
 
@@ -58,12 +59,13 @@ drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 css
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 fonts
 -rw-rw-r-- 1 www-data www-data 3800 Sep 12 21:09 index.php
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 js
+drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 json
 -rw-rw-r-- 1 www-data www-data  254 Sep 12 21:09 README.md
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 screenshots
 ```
 
-- *benchbox*: "Backend", Perl Script and Configuration file.
-- *json*: Outfiles Directory.
+- **benchbox**: "Backend", Perl Script and Configuration file.
+- **json**: Outfiles Directory.
 
 ## Configuration
 
@@ -92,11 +94,13 @@ password=
 db=sysbench
 table_engine=InnoDB
 ```
-### benchbox
+**benchbox**
+
 - num_threads: Number of threads used by SysBench. The [1..16] notation is also available = increment by 1 from 1 to 16 threads.
 - output: Outfiles directory
 
-### sysbench
+**sysbench**
+
 oltp_lua: SysBench OLTP lua script
 read_only: Enable/Disable SELECT only on SysBench transactions
 table_size:
@@ -104,7 +108,8 @@ report_interval: Number of seconds between two SysBench checkpoints
 max_time: Duration (in sec) of the SysBench tests
 options: Add your SysBench options here
 
-### mysql
+**mysql**
+
 host: MySQL target Server
 port:
 user: MySQL user used by SysBench 
@@ -128,7 +133,7 @@ Usage: perl benchbox.pl [OPTIONS]
   --verbose                      Print SysBench Outputs.
 ```
 
-### Prepare target MySQL
+### Create SysBench environment on target MySQL
 ```
 # perl benchbox.pl -a prepare
 INFO: Done
