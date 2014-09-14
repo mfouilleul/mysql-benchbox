@@ -59,9 +59,12 @@ drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 css
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 fonts
 -rw-rw-r-- 1 www-data www-data 3800 Sep 12 21:09 index.php
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 js
-drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 json
 -rw-rw-r-- 1 www-data www-data  254 Sep 12 21:09 README.md
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 screenshots
+```
+
+```
+# mkdir json
 ```
 
 - **benchbox**: "Backend", Perl Script and Configuration file.
