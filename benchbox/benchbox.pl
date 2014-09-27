@@ -28,7 +28,7 @@ if (`sysbench --version` =~ m/0.5/) {
     exit 1;
 }
 
-my $version = "0.1";
+my $version = "0.2";
 
 my $ckpts = 1;
 
@@ -262,7 +262,7 @@ if ($option_action eq "run") {
                 print $result;
             }
             
-            if ($result =~/ERROR/i) {
+            if ($result =~/(ERROR|FATAL)/i) {
                 print "ERROR: Sysbench Error with this call : $cmd\n";
                 exit 1;
             }else{
@@ -302,7 +302,7 @@ if ($option_action eq "run") {
                 print $result;
             }
             
-            if ($result =~/ERROR/i) {
+            if ($result =~/(ERROR|FATAL)/i) {
                 print "ERROR: Sysbench Error with this call : $cmd\n";
                 exit 1;
             }else{
@@ -365,7 +365,7 @@ if ($option_action eq "run") {
 }else{
     my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size $option_action";  
     my $result = `$cmd`;
-    if ($result =~ m/ERROR/) {
+    if ($result =~ m/(ERROR|FATAL)/) {
         print "ERROR: Sysbench Error with this call : $cmd\n";
         exit 1;
     }else{
