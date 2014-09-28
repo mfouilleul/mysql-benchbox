@@ -1,7 +1,7 @@
 # About
 
-BenchBox allows you to automize, archive and visualize your MySQL benchmarks did with SysBench (oltp tests).
-It is composed by a set of Perl scripts ("backend") and a Web Interface. The SysBench versions currently supported by BenchBox are 0.4x and 0.5.
+BenchBox allows you to automate, archive and visualize your MySQL benchmarks did with SysBench (oltp tests).
+It is composed by a set of Perl scripts and a Web Interface. The SysBench versions currently supported by BenchBox are 0.4x and 0.5.
 
 ![Charts](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/2.png)
 
@@ -19,9 +19,10 @@ Find official releases in [https://github.com/mfouilleul/benchbox/releases](http
 
 BenchBox is based on SysBench, the versions currently supported are SysBench 0.4x and SysBench 0.5 (Recommended).
 
-Prerequisites for BenchBox "backend":
+Prerequisites for BenchBox Perl Scripts:
 - SysBench 0.4x or higher
 - Perl v5.8 or higher
+- Perl modules DBI and DBD::mysql
 
 Prerequisites for BenchBox Web Interface:
 - Web Server (Apache, NginX...)
@@ -34,7 +35,7 @@ Note that the installation of the BenchBox requirements (SysBench, Web Server...
 Our setup for this Quickstart:
 - Debian 6
 - SysBench 0.5
-- NginX + PHP (Web Server)
+- Apache2 + PHP5 (Web Server)
 - Perl v5.16
 
 ## Installation
@@ -54,32 +55,30 @@ Here is the BenchBox architecture
 ```
 root@seksi-srv:/var/www/BenchBox-beta# ll
 total 28
-drwxrwxr-x 3 www-data www-data 4096 Sep 12 21:09 benchbox
+drwxrwxr-x 3 www-data www-data 4096 Sep 12 21:09 benchbox-scripts
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 css
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 fonts
 -rw-rw-r-- 1 www-data www-data 3800 Sep 12 21:09 index.php
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 js
+drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 json
 -rw-rw-r-- 1 www-data www-data  254 Sep 12 21:09 README.md
 drwxrwxr-x 2 www-data www-data 4096 Sep 12 21:09 screenshots
 ```
 
-```
-# mkdir json
-```
-
-- **benchbox**: "Backend", Perl Script and Configuration file.
-- **json**: Outfiles Directory.
+- **benchbox-scripts**: BenchBox Perl Scripts.
+- **json**: Benchmark Outfiles.
 
 ## Configuration
 
 The configuration file is splitted in three parts:
 ```
-# cd benchbox/
+# cd benchbox-scripts/
 vi benchbox.conf
 
 [benchbox]
 num_threads=2,4,6,8,16,32,64,128,256
 output=../json
+show_variables=1
 
 [sysbench]
 oltp_lua=/usr/local/sysbench/tests/db/oltp.lua
@@ -101,24 +100,25 @@ table_engine=InnoDB
 
 - num_threads: Number of threads used by SysBench. The [1..16] notation is also available = increment by 1 from 1 to 16 threads.
 - output: Outfiles directory
+- show_variables: dump MySQL variables during benchmark
 
 **sysbench**
 
-oltp_lua: SysBench OLTP lua script
-read_only: Enable/Disable SELECT only on SysBench transactions
-table_size:
-report_interval: Number of seconds between two SysBench checkpoints
-max_time: Duration (in sec) of the SysBench tests
-options: Add your SysBench options here
+- oltp_lua: SysBench OLTP lua script
+- read_only: Enable/Disable SELECT only on SysBench transactions
+- table_size:
+- report_interval: Number of seconds between two SysBench checkpoints
+- max_time: Duration (in sec) of the SysBench tests
+- options: Add your SysBench options here
 
 **mysql**
 
-host: MySQL target Server
-port:
-user: MySQL user used by SysBench 
-password:
-db: Database use by SysBench
-table_engine:
+- host: MySQL target Server
+- port:
+- user: MySQL user used by SysBench 
+- password:
+- db: Database use by SysBench
+- table_engine:
 
 ## Execution
 
@@ -156,6 +156,17 @@ INFO: Done with 5 Thread(s)
 # perl benchbox.pl -a cleanup
 INFO: Done
 ```
+
+# BenchBox Web Interface
+
+The BenchBox Interface is a single page interface.
+Firstly we'll have the list of your benchmarks, you can filtered them via the Search Bar on the top.
+
+![List](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/1.png)
+
+Click on a benchmark (.json) to show its details and charts.
+
+![Charts](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/2.png)
 
 # Bugs
 Please report bugs on the [Issues page](https://github.com/mfouilleul/benchbox/issues)

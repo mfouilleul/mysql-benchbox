@@ -11,8 +11,12 @@ th:hover {
     cursor: pointer;
 }
 
-h1 {
+#main_title {
     color: #ff5b5b;
+}
+
+#main_title:hover {
+    cursor: pointer;
 }
 
 .filename {
@@ -46,5 +50,9 @@ h1 {
 }
 
 #context{
+    display: none;
+}
+
+#variables{
     display: none;
 }

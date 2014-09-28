@@ -1,7 +1,13 @@
 $(document).ready(function(){
 	
+	$('#main_title').click(function() {
+    	      location.reload();
+	});
+ 
+	
 	$("#searchInput").keyup(function() {
 		$("#context").hide();
+		$("#variables").hide();
 		$("#charts").hide();
 		var rows = $("#files tbody").find("tr").hide();
 		var data = this.value.split(" ");
@@ -14,6 +20,8 @@ $(document).ready(function(){
 		$("#searchInput").val("");
 		getCharts($(this).closest('tr').attr("id"));
 	});
+	
+	
 });
 
 function getCharts(filename){
@@ -25,6 +33,7 @@ function getCharts(filename){
 		$("#context_table > tbody").empty();
 		$("#context_table > tbody").append("<tr><td>Name</td><td>" + json.info.name + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>JSON</td><td>" + json.info.filename + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Variables</td><td><button type='button' class='btn variables_btn'>Show Variables</button></td></tr>");
 		$("#context_table > tbody").append("<tr><td>SysBench Version</td><td>" + json.info.sysbench + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Date</td><td>" + json.info.datetime + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Hostname</td><td>" + json.info.hostname + "</td></tr>");
@@ -193,8 +202,26 @@ function getCharts(filename){
 		var myLineChart_rds = new Chart(rds).Line(data_rds, options);
 		var myLineChart_wrs = new Chart(wrs).Line(data_wrs, options);
 		var myLineChart_rt = new Chart(rt).Line(data_rt, options);
+				
+		$(".variables_btn").click(function(){
+			getVariables(filename);
+		});
 		
 		$("#charts").show();
+        });
+	
+}
+
+
+function getVariables(filename){
+	
+	$.getJSON('./json/' + filename, function(json) {
+		
+		$("#variables").show();
+		$("#variables_table > tbody").empty();
+		$.each(json.variables, function( i, variable ) {
+			$("#variables_table > tbody").append("<tr><td>" + variable.n + "</td><td>" + variable.v + "</td></tr>");
+		});
         });
 	
 }

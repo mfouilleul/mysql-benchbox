@@ -12,6 +12,8 @@ use modules::Utils;
 
 use JSON;
 
+use DBI;
+
 if (!`which sysbench`) {
     print "ERROR: Sysbench isn't installed\n";
     exit 1;
@@ -201,9 +203,9 @@ if($options){
     $options = "";
 }
 
-#-- Benchmark
+#-- BenchBox
 
-# Benchmark - Threads
+# BenchBox - Threads
 my $numThreads_str = $cnf_file->{benchbox}->{num_threads};
 my @numThreads = ();
 if($numThreads_str){
@@ -220,12 +222,26 @@ if($numThreads_str){
     $numThreads[0] = 1
 }
 
-# Benchmark - Output
+# BenchBox - Output
 my $output = $cnf_file->{benchbox}->{output};
 if($output){
     Utils->trimText(\$output);
 }else{
     $output = $script_path
+}
+
+# BenchBox - Output
+my $show_variables = $cnf_file->{benchbox}->{show_variables};
+if($show_variables){
+    Utils->trimText(\$output);
+    if ($show_variables =~ m/(yes|1|on)/i) {
+        $show_variables = 1;
+    }else{
+        $show_variables = 0;
+    }
+    
+}else{
+    $show_variables = 0;
 }
 
 unless (-e $output){
@@ -249,6 +265,23 @@ if ($option_action eq "run") {
     $OUTPUT->{info}->{report_interval} = $report_interval;
     $OUTPUT->{info}->{max_time} = $max_time;
     
+
+    # Show Variables	
+    my $dsn = "DBI:mysql:database=$db_db;host=$db_host;port=$db_port;mysql_connect_timeout=10;mysql_read_timeout=10";
+    my $dbh = DBI->connect($dsn, $db_user, $db_password);
+    my $sth = $dbh->prepare("SELECT lower(VARIABLE_NAME), VARIABLE_VALUE FROM information_schema.GLOBAL_VARIABLES");
+    $sth->execute;
+    my $result = $sth->fetchall_arrayref();
+    my @variables;    
+    foreach ( @$result ) {
+        my $variable = {
+                        n => $$_[0],
+                        v => $$_[1]
+                    };
+        push(@variables,$variable);
+    }
+    $OUTPUT->{variables} = \@variables;
+
     my ($tps, $rds, $wrs, $rt);
     
     print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Threads: " . join(",",@numThreads) . "; Outfile: $output_file\n";

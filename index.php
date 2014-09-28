@@ -10,7 +10,7 @@
     </head>
     <body>
         <div class="container">
-            <h1>Bench<b>Box</b></h1>
+            <h1 id="main_title">Bench<b>Box</b></h1>
             <div id="filter">
                 <form role="form">
                     <div class="form-group">
@@ -46,6 +46,22 @@
                         <tr>
                             <th>
                                 Info
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="variables">
+                <table id="variables_table" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
                             </th>
                             <th>
                                 Value
