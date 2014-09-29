@@ -160,7 +160,7 @@ INFO: Done
 # BenchBox Web Interface
 
 The BenchBox Interface is a single page interface.
-Firstly we'll have the list of your benchmarks, you can filtered them via the Search Bar on the top.
+Firstly there is the benchmark list, you can filtered them via the search bar on the top.
 
 ![List](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/1.png)
 
