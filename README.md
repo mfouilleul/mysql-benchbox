@@ -129,38 +129,27 @@ BenchBox v0.1
 Usage: perl benchbox.pl [OPTIONS]
 
   -h, --help                     Display this help.
-  -a=STRING,--action=STRING      BenchBox Action: prepare, cleanup, run.
   -n=STRING,--name=STRING        Name your bench.
   -c, --config                   Manually specify a benchbox.conf file (Default value is <benchbox dir>/benchbox.conf).
   -v, --version                  Output version information.
   --verbose                      Print SysBench Outputs.
 ```
 
-### Create SysBench environment on target MySQL
-```
-# perl benchbox.pl -a prepare
-INFO: Done
-```
-
 ### Run
 ```
-# perl benchbox.pl -a run -n "My First Test"
+# perl benchbox.pl -n "My First Test"
 Sysbench Version: 0.5x; Name: My First Test; Threads: 3,4,5; Outfile: ../json/20140914120605_127.0.0.1_3306_my_first_test.json
-INFO: Done with 3 Thread(s)
-INFO: Done with 4 Thread(s)
-INFO: Done with 5 Thread(s)
-```
-
-### Cleanup (drop SysBench tables on target MySQL)
-```
-# perl benchbox.pl -a cleanup
-INFO: Done
+INFO: Prepare
+INFO: Run with 3 Thread(s)
+INFO: Run with 4 Thread(s)
+INFO: Run with 5 Thread(s)
+INFO: Cleanup
 ```
 
 # BenchBox Web Interface
 
 The BenchBox Interface is a single page interface.
-Firstly there is the benchmark list, you can filtered them via the search bar on the top.
+Firstly we'll have the list of your benchmarks, you can filtered them via the Search Bar on the top.
 
 ![List](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/1.png)
 
