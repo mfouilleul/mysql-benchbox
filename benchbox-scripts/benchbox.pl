@@ -40,7 +40,6 @@ my $ckpts = 1;
 my $script_path = $FindBin::Bin . "/";
 
 my $option_config = $script_path . "/benchbox.conf";
-my $option_action = undef;
 my $option_name = undef;
 my $option_verbose = undef;
 my $option_version = undef;
@@ -48,7 +47,6 @@ my $option_help = undef;
 
 GetOptions (
     'c|config=s' => \$option_config,
-    'a|action=s' => \$option_action,
     'v|verbose' => \$option_verbose,
     'version' => \$option_version,
     'n|name=s' => \$option_name,
@@ -62,18 +60,6 @@ if($option_version){
 
 if($option_help){
     Utils->printHelp($version);
-    exit 1;
-}
-
-if($option_action){
-    
-    if ($option_action !~ m/(prepare|run|cleanup)/) {
-        print "ERROR: uknown action \"$option_action\"\n";
-        exit 1;
-    }
-    
-}else{
-    print "ERROR: Please specify an action (prepare, run or cleanup)\n";
     exit 1;
 }
 
@@ -249,161 +235,182 @@ unless (-e $output){
     exit 1;
 }
 
-if ($option_action eq "run") {
-    
-    my $output_file = "$output/" . Utils->getNowCondensed() . "_" . $db_host . "_" . $db_port . $option_name_tr . ".json";
-    
-    my $OUTPUT;
-    $OUTPUT->{info}->{sysbench} = $sysbench_version;
-    $OUTPUT->{info}->{name} = $option_name;
-    $OUTPUT->{info}->{filename} = $output_file;
-    $OUTPUT->{info}->{hostname} = $db_host;
-    $OUTPUT->{info}->{port} = $db_port;
-    $OUTPUT->{info}->{datetime} = Utils->getNow();
-    $OUTPUT->{info}->{threads} = \@numThreads;
-    $OUTPUT->{info}->{read_only} = $read_only;
-    $OUTPUT->{info}->{report_interval} = $report_interval;
-    $OUTPUT->{info}->{max_time} = $max_time;
-    
+my $output_file = "$output/" . Utils->getNowCondensed() . "_" . $db_host . "_" . $db_port . $option_name_tr . ".json";
 
-    # Show Variables	
-    my $dsn = "DBI:mysql:database=$db_db;host=$db_host;port=$db_port;mysql_connect_timeout=10;mysql_read_timeout=10";
-    my $dbh = DBI->connect($dsn, $db_user, $db_password);
-    my $sth = $dbh->prepare("SELECT lower(VARIABLE_NAME), VARIABLE_VALUE FROM information_schema.GLOBAL_VARIABLES");
-    $sth->execute;
-    my $result = $sth->fetchall_arrayref();
-    my @variables;    
-    foreach ( @$result ) {
-        my $variable = {
-                        n => $$_[0],
-                        v => $$_[1]
-                    };
-        push(@variables,$variable);
-    }
-    $OUTPUT->{variables} = \@variables;
+my $OUTPUT;
+$OUTPUT->{info}->{sysbench} = $sysbench_version;
+$OUTPUT->{info}->{name} = $option_name;
+$OUTPUT->{info}->{filename} = $output_file;
+$OUTPUT->{info}->{hostname} = $db_host;
+$OUTPUT->{info}->{port} = $db_port;
+$OUTPUT->{info}->{datetime} = Utils->getNow();
+$OUTPUT->{info}->{threads} = \@numThreads;
+$OUTPUT->{info}->{read_only} = $read_only;
+$OUTPUT->{info}->{report_interval} = $report_interval;
+$OUTPUT->{info}->{max_time} = $max_time;
 
-    my ($tps, $rds, $wrs, $rt);
-    
-    print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Threads: " . join(",",@numThreads) . "; Outfile: $output_file\n";
-    
-    # Sysbench Version 0.4x
-    if ($sysbench_version eq "0.4x") {
-        foreach my $threads (@numThreads){
-            my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads $options run";  
-            my $result = `$cmd`;
-            if ($option_verbose) {
-                print $result;
-            }
-            
-            if ($result =~/(ERROR|FATAL)/i) {
-                print "ERROR: Sysbench Error with this call : $cmd\n";
-                exit 1;
-            }else{
-                $result =~ /total time:\s*(\d+\.?\d*)s/;
-                my $total_time = $1;
-                $result =~ /read:\s*(\d+)/;
-                my $rds_ = $1;
-                $rds_ = floor($rds_ / $total_time);
-                $rds->{$threads}->{full} = $rds_;
-                $rds->{$threads}->{avg} = $rds_;
-                $result =~ /write:\s*(\d+)/;
-                my $wrs_ = $1;
-                $wrs_ = floor($wrs_ / $total_time);
-                $wrs->{$threads}->{full} = $wrs_;
-                $wrs->{$threads}->{avg} = $wrs_;
-                $result =~ /transactions:.*\((\d+\.\d+)\s/;
-                my $tps_ = $1;
-                $tps->{$threads}->{full} = $tps_;
-                $tps->{$threads}->{avg} = $tps_;
-                $result =~ /approx\..*(\d+\.\d+)ms/;
-                my $rt_ = $1;
-                $rt->{$threads}->{full} = $rt_;
-                $rt->{$threads}->{avg} = $rt_;
-                
-                print "INFO: Done with $threads Thread(s)\n";
-            }
-        }
-    }
-    
-    # Sysbench Version 0.5x
-    if ($sysbench_version eq "0.5x") {
-        foreach my $threads (@numThreads){
-            my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
-            my $result = `$cmd`;
-            
-            if ($option_verbose) {
-                print $result;
-            }
-            
-            if ($result =~/(ERROR|FATAL)/i) {
-                print "ERROR: Sysbench Error with this call : $cmd\n";
-                exit 1;
-            }else{
-                my @lines = split("\n", $result);
-                
-                my @tps = ();
-                my @rds = ();
-                my @wrs = ();
-                my @rt = ();
-                
-                my $lines_ckpt = 0;
-                
-                foreach my $line (@lines){
-                    if ($line =~ /\[.*\](.*)/) {
-                        $lines_ckpt++;
-                        my $checkpoint = $1;
-                        
-                        $checkpoint =~ /threads: \d+, tps: (\d+\.\d+), reads\/s: (\d+\.\d+), writes\/s: (\d+\.\d+), response time: (\d+\.\d+)ms \(95%\)/;
-                        
-                        my ($tps_, $rds_, $wrs_, $rt_) = ($1, $2, $3, $4);
-                        
-                        push(@tps, $tps_);
-                        push(@rds, $rds_);
-                        push(@wrs, $wrs_);
-                        push(@rt, $rt_);
-                        
-                    }
-                }
-                
-                if ($ckpts == 1 || $ckpts > $lines_ckpt) {
-                    $ckpts = $lines_ckpt;
-                }
-                
-                $tps->{$threads}->{full} = \@tps;
-                $rds->{$threads}->{full} = \@rds;
-                $wrs->{$threads}->{full} = \@wrs;
-                $rt->{$threads}->{full} = \@rt;
-                
-                $tps->{$threads}->{avg} = Utils->getAVG(\@tps);
-                $rds->{$threads}->{avg} = Utils->getAVG(\@rds);
-                $wrs->{$threads}->{avg} = Utils->getAVG(\@wrs);
-                $rt->{$threads}->{avg} = Utils->getAVG(\@rt);
-                
-                print "INFO: Done with $threads Thread(s)\n";
-            }
-        }
-    }
-    
-    $OUTPUT->{info}->{ckpts} = $ckpts;
-    $OUTPUT->{bench}->{tps} = $tps;
-    $OUTPUT->{bench}->{rds} = $rds;
-    $OUTPUT->{bench}->{wrs} = $wrs;
-    $OUTPUT->{bench}->{rt} = $rt;
-    
-    # Write Output
-    open (OUTFILE, ">>$output_file");
-    print OUTFILE to_json($OUTPUT);
-    close (OUTFILE);
-    
-}else{
-    my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size $option_action";  
+
+# Show Variables	
+my $dsn = "DBI:mysql:database=$db_db;host=$db_host;port=$db_port;mysql_connect_timeout=10;mysql_read_timeout=10";
+my $dbh = DBI->connect($dsn, $db_user, $db_password);
+my $sth = $dbh->prepare("SELECT lower(VARIABLE_NAME), VARIABLE_VALUE FROM information_schema.GLOBAL_VARIABLES");
+$sth->execute;
+my $result = $sth->fetchall_arrayref();
+my @variables;    
+foreach ( @$result ) {
+    my $variable = {
+                    n => $$_[0],
+                    v => $$_[1]
+                };
+    push(@variables,$variable);
+}
+$OUTPUT->{variables} = \@variables;
+
+my ($tps, $rds, $wrs, $rt);
+
+print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Threads: " . join(",",@numThreads) . "; Outfile: $output_file\n";
+
+# Sysbench Version 0.4x
+if ($sysbench_version eq "0.4x") {
+    my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size prepare";  
     my $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
         print "ERROR: Sysbench Error with this call : $cmd\n";
         exit 1;
     }else{
-        print "INFO: Done\n";
+        print "INFO: Prepare\n";
+    }
+    
+    foreach my $threads (@numThreads){
+        my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads $options run";  
+        $result = `$cmd`;
+        if ($option_verbose) {
+            print $result;
+        }
+        
+        if ($result =~/(ERROR|FATAL)/i) {
+            print "ERROR: Sysbench Error with this call : $cmd\n";
+            exit 1;
+        }else{
+            $result =~ /total time:\s*(\d+\.?\d*)s/;
+            my $total_time = $1;
+            $result =~ /read:\s*(\d+)/;
+            my $rds_ = $1;
+            $rds_ = floor($rds_ / $total_time);
+            $rds->{$threads}->{full} = $rds_;
+            $rds->{$threads}->{avg} = $rds_;
+            $result =~ /write:\s*(\d+)/;
+            my $wrs_ = $1;
+            $wrs_ = floor($wrs_ / $total_time);
+            $wrs->{$threads}->{full} = $wrs_;
+            $wrs->{$threads}->{avg} = $wrs_;
+            $result =~ /transactions:.*\((\d+\.\d+)\s/;
+            my $tps_ = $1;
+            $tps->{$threads}->{full} = $tps_;
+            $tps->{$threads}->{avg} = $tps_;
+            $result =~ /approx\..*(\d+\.\d+)ms/;
+            my $rt_ = $1;
+            $rt->{$threads}->{full} = $rt_;
+            $rt->{$threads}->{avg} = $rt_;
+            
+            print "INFO: Done with $threads Thread(s)\n";
+        }
+    }
+    
+    $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size cleanup";  
+    $result = `$cmd`;
+    if ($result =~ m/(ERROR|FATAL)/) {
+        print "ERROR: Sysbench Error with this call : $cmd\n";
+        exit 1;
+    }else{
+        print "INFO: Cleanup\n";
     }
 }
 
+# Sysbench Version 0.5x
+if ($sysbench_version eq "0.5x") {
+    my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size prepare";  
+    my $result = `$cmd`;
+    if ($result =~ m/(ERROR|FATAL)/) {
+        print "ERROR: Sysbench Error with this call : $cmd\n";
+        exit 1;
+    }else{
+        print "INFO: Prepare\n";
+    }
+    
+    foreach my $threads (@numThreads){
+        $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
+        my $result = `$cmd`;
+        
+        if ($option_verbose) {
+            print $result;
+        }
+        
+        if ($result =~/(ERROR|FATAL)/i) {
+            print "ERROR: Sysbench Error with this call : $cmd\n";
+            exit 1;
+        }else{
+            my @lines = split("\n", $result);
+            
+            my @tps = ();
+            my @rds = ();
+            my @wrs = ();
+            my @rt = ();
+            
+            my $lines_ckpt = 0;
+            
+            foreach my $line (@lines){
+                if ($line =~ /\[.*\](.*)/) {
+                    $lines_ckpt++;
+                    my $checkpoint = $1;
+                    
+                    $checkpoint =~ /threads: \d+, tps: (\d+\.\d+), reads\/s: (\d+\.\d+), writes\/s: (\d+\.\d+), response time: (\d+\.\d+)ms \(95%\)/;
+                    
+                    my ($tps_, $rds_, $wrs_, $rt_) = ($1, $2, $3, $4);
+                    
+                    push(@tps, $tps_);
+                    push(@rds, $rds_);
+                    push(@wrs, $wrs_);
+                    push(@rt, $rt_);
+                    
+                }
+            }
+            
+            if ($ckpts == 1 || $ckpts > $lines_ckpt) {
+                $ckpts = $lines_ckpt;
+            }
+            
+            $tps->{$threads}->{full} = \@tps;
+            $rds->{$threads}->{full} = \@rds;
+            $wrs->{$threads}->{full} = \@wrs;
+            $rt->{$threads}->{full} = \@rt;
+            
+            $tps->{$threads}->{avg} = Utils->getAVG(\@tps);
+            $rds->{$threads}->{avg} = Utils->getAVG(\@rds);
+            $wrs->{$threads}->{avg} = Utils->getAVG(\@wrs);
+            $rt->{$threads}->{avg} = Utils->getAVG(\@rt);
+            
+            print "INFO: Run with $threads Thread(s)\n";
+        }
+    }
+    
+    $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size cleanup";  
+    $result = `$cmd`;
+    if ($result =~ m/(ERROR|FATAL)/) {
+        print "ERROR: Sysbench Error with this call : $cmd\n";
+        exit 1;
+    }else{
+        print "INFO: Cleanup\n";
+    }
+}
 
+$OUTPUT->{info}->{ckpts} = $ckpts;
+$OUTPUT->{bench}->{tps} = $tps;
+$OUTPUT->{bench}->{rds} = $rds;
+$OUTPUT->{bench}->{wrs} = $wrs;
+$OUTPUT->{bench}->{rt} = $rt;
+
+# Write Output
+open (OUTFILE, ">>$output_file");
+print OUTFILE to_json($OUTPUT);
+close (OUTFILE);
