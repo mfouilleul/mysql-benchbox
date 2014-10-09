@@ -4,7 +4,8 @@ $(document).ready(function(){
     	      location.reload();
 	});
  
-	
+        $("#files").tablesorter( {sortList: [[1,1]]} ); 
+    
 	$("#searchInput").keyup(function() {
 		$("#context").hide();
 		$("#variables").hide();
@@ -77,125 +78,125 @@ function getCharts(filename){
 		};
 		
 		// FULL
-		for (v = 0; v < json.info.ckpts; v++) {
-			// TPS
-			data_tps.datasets[v] = {
-				fillColor: "rgba(255,168,168,0.1)",
-				strokeColor: "rgba(255,168,168,0.2)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(255,66,66,1)"
-			};
-			data_tps.datasets[v].label = v + 1;
-			data_tps.datasets[v].data = [];
-			$.each(json.info.threads, function( i, threads_value ) {
-				var value = json.bench.tps[json.info.threads[i]].full[v];
-				data_tps.datasets[v].data.push(value);
-			});
-			
-			// RDS
-			data_rds.datasets[v] = {
-				fillColor: "rgba(142,199,255,0.1)",
-				strokeColor: "rgba(142,199,255,0.2)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(40,148,255,1)"
-			};
-			data_rds.datasets[v].label = v + 1;
-			data_rds.datasets[v].data = [];
-			$.each(json.info.threads, function( i, threads_value ) {
-				var value = json.bench.rds[json.info.threads[i]].full[v];
-				data_rds.datasets[v].data.push(value);
-			});
-			
-			// WRS
-			data_wrs.datasets[v] = {
-				fillColor: "rgba(75,215,134,0.1)",
-				strokeColor: "rgba(75,215,134,0.2)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(30,132,173,1)"
-			};
-			data_wrs.datasets[v].label = v + 1;
-			data_wrs.datasets[v].data = [];
-			$.each(json.info.threads, function( i, threads_value ) {
-				var value = json.bench.wrs[json.info.threads[i]].full[v];
-				data_wrs.datasets[v].data.push(value);
-			});
-			// RT
-			data_rt.datasets[v] = {
-				fillColor: "rgba(252,215,95,0.1)",
-				strokeColor: "rgba(252,215,95,0.2)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(214,165,5,1)"
-			};
-			data_rt.datasets[v].label = v + 1;
-			data_rt.datasets[v].data = [];
-			$.each(json.info.threads, function( i, threads_value ) {
-				var value = json.bench.rt[json.info.threads[i]].full[v];
-				data_rt.datasets[v].data.push(value);
-			});
-		}
+		//for (v = 0; v < json.info.ckpts; v++) {
+		//	//// TPS
+		//	//data_tps.datasets[v] = {
+		//	//	fillColor: "rgba(255,168,168,0.1)",
+		//	//	strokeColor: "rgba(255,168,168,0.2)",
+		//	//	pointStrokeColor: "#fff",
+		//	//	pointHighlightFill: "#fff",
+		//	//	pointHighlightStroke: "rgba(255,66,66,1)"
+		//	//};
+		//	//data_tps.datasets[v].label = v + 1;
+		//	//data_tps.datasets[v].data = [];
+		//	//$.each(json.info.threads, function( i, threads_value ) {
+		//	//	var value = json.bench.tps[json.info.threads[i]].full[v];
+		//	//	data_tps.datasets[v].data.push(value);
+		//	//});
+		//	//
+		//	//// RDS
+		//	//data_rds.datasets[v] = {
+		//	//	fillColor: "rgba(142,199,255,0.1)",
+		//	//	strokeColor: "rgba(142,199,255,0.2)",
+		//	//	pointStrokeColor: "#fff",
+		//	//	pointHighlightFill: "#fff",
+		//	//	pointHighlightStroke: "rgba(40,148,255,1)"
+		//	//};
+		//	//data_rds.datasets[v].label = v + 1;
+		//	//data_rds.datasets[v].data = [];
+		//	//$.each(json.info.threads, function( i, threads_value ) {
+		//	//	var value = json.bench.rds[json.info.threads[i]].full[v];
+		//	//	data_rds.datasets[v].data.push(value);
+		//	//});
+		//	//
+		//	//// WRS
+		//	//data_wrs.datasets[v] = {
+		//	//	fillColor: "rgba(75,215,134,0.1)",
+		//	//	strokeColor: "rgba(75,215,134,0.2)",
+		//	//	pointStrokeColor: "#fff",
+		//	//	pointHighlightFill: "#fff",
+		//	//	pointHighlightStroke: "rgba(30,132,173,1)"
+		//	//};
+		//	//data_wrs.datasets[v].label = v + 1;
+		//	//data_wrs.datasets[v].data = [];
+		//	//$.each(json.info.threads, function( i, threads_value ) {
+		//	//	var value = json.bench.wrs[json.info.threads[i]].full[v];
+		//	//	data_wrs.datasets[v].data.push(value);
+		//	//});
+		//	//// RT
+		//	//data_rt.datasets[v] = {
+		//	//	fillColor: "rgba(252,215,95,0.1)",
+		//	//	strokeColor: "rgba(252,215,95,0.2)",
+		//	//	pointStrokeColor: "#fff",
+		//	//	pointHighlightFill: "#fff",
+		//	//	pointHighlightStroke: "rgba(214,165,5,1)"
+		//	//};
+		//	//data_rt.datasets[v].label = v + 1;
+		//	//data_rt.datasets[v].data = [];
+		//	//$.each(json.info.threads, function( i, threads_value ) {
+		//	//	var value = json.bench.rt[json.info.threads[i]].full[v];
+		//	//	data_rt.datasets[v].data.push(value);
+		//	//});
+		//}
 		
 		// AVG
 		// TPS
-		data_tps.datasets[v] = {
-			fillColor: "rgba(255,168,168,0)",
+		data_tps.datasets[0] = {
+			fillColor: "rgba(255,168,168,0.4)",
 			strokeColor: "rgba(255,168,168,1)",
 			pointStrokeColor: "#fff",
 			pointHighlightFill: "#fff",
 			pointHighlightStroke: "rgba(255,66,66,1)"
 		};
-		data_tps.datasets[v].label = v + 1;
-		data_tps.datasets[v].data = [];
+		data_tps.datasets[0].label = "AVG";
+		data_tps.datasets[0].data = [];
 		$.each(json.info.threads, function( i, threads_value ) {
 			var value = json.bench.tps[json.info.threads[i]].avg;
-			data_tps.datasets[v].data.push(value);
+			data_tps.datasets[0].data.push(value);
 		});
 		
 		// RDS
-		data_rds.datasets[v] = {
-			fillColor: "rgba(142,199,255,0)",
+		data_rds.datasets[0] = {
+			fillColor: "rgba(142,199,255,0.4)",
 			strokeColor: "rgba(142,199,255,1)",
 			pointStrokeColor: "#fff",
 			pointHighlightFill: "#fff",
 			pointHighlightStroke: "rgba(40,148,255,1)"
 		};
-		data_rds.datasets[v].label = v + 1;
-		data_rds.datasets[v].data = [];
+		data_rds.datasets[0].label = "AVG";
+		data_rds.datasets[0].data = [];
 		$.each(json.info.threads, function( i, threads_value ) {
 			var value = json.bench.rds[json.info.threads[i]].avg;
-			data_rds.datasets[v].data.push(value);
+			data_rds.datasets[0].data.push(value);
 		});
 		
 		// WRS
-		data_wrs.datasets[v] = {
-			fillColor: "rgba(75,215,134,0)",
+		data_wrs.datasets[0] = {
+			fillColor: "rgba(75,215,134,0.4)",
 			strokeColor: "rgba(75,215,134,1)",
 			pointStrokeColor: "#fff",
 			pointHighlightFill: "#fff",
 			pointHighlightStroke: "rgba(30,132,173,1)"
 		};
-		data_wrs.datasets[v].label = v + 1;
-		data_wrs.datasets[v].data = [];
+		data_wrs.datasets[0].label = "AVG";
+		data_wrs.datasets[0].data = [];
 		$.each(json.info.threads, function( i, threads_value ) {
 			var value = json.bench.wrs[json.info.threads[i]].avg;
-			data_wrs.datasets[v].data.push(value);
+			data_wrs.datasets[0].data.push(value);
 		});
 		// RT
-		data_rt.datasets[v] = {
-			fillColor: "rgba(252,215,95,0)",
+		data_rt.datasets[0] = {
+			fillColor: "rgba(252,215,95,0.4)",
 			strokeColor: "rgba(252,215,95,1)",
 			pointStrokeColor: "#fff",
 			pointHighlightFill: "#fff",
 			pointHighlightStroke: "rgba(214,165,5,1)"
 		};
-		data_rt.datasets[v].label = v + 1;
-		data_rt.datasets[v].data = [];
+		data_rt.datasets[0].label = "AVG";
+		data_rt.datasets[0].data = [];
 		$.each(json.info.threads, function( i, threads_value ) {
 			var value = json.bench.rt[json.info.threads[i]].avg;
-			data_rt.datasets[v].data.push(value);
+			data_rt.datasets[0].data.push(value);
 		});
 			
 		var myLineChart_tps = new Chart(tps).Line(data_tps, options);
