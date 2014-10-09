@@ -30,7 +30,7 @@ if (`sysbench --version` =~ m/0.5/) {
     exit 1;
 }
 
-my $version = "0.2";
+my $version = "0.3";
 
 my $ckpts = 1;
 
