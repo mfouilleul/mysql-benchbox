@@ -83,6 +83,7 @@ show_variables=1
 [sysbench]
 oltp_lua=/usr/local/sysbench/tests/db/oltp.lua
 read_only=on
+tables_count=4
 table_size=100000
 report_interval=1
 max_time=3
@@ -106,7 +107,8 @@ table_engine=InnoDB
 
 - oltp_lua: SysBench OLTP lua script
 - read_only: Enable/Disable SELECT only on SysBench transactions
-- table_size:
+- tables_count: Number of tables on which Sysbench will work
+- table_size: 
 - report_interval: Number of seconds between two SysBench checkpoints
 - max_time: Duration (in sec) of the SysBench tests
 - options: Add your SysBench options here
@@ -120,11 +122,20 @@ table_engine=InnoDB
 - db: Database use by SysBench
 - table_engine:
 
+## MySQL User and Schema
+
+Before started BenchBox, you should create the Sysbench user and schema (as specified in the benchbox.conf): 
+
+```
+CREATE DATABASE sysbench;
+GRANT ALL PRIVILEGES ON sysbench.* TO sysbench;
+```
+
 ## Execution
 
 ```
 # perl benchbox.pl --help
-BenchBox v0.1
+BenchBox v0.3
 
 Usage: perl benchbox.pl [OPTIONS]
 

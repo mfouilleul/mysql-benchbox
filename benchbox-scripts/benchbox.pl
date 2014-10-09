@@ -156,6 +156,14 @@ if($read_only){
     $read_only = "on"
 }
 
+# Sysbench - Table Count
+my $tables_count = $cnf_file->{sysbench}->{table_count};
+if($tables_count){
+    Utils->trimText(\$tables_count);
+}else{
+    $tables_count = 1
+}
+
 # Sysbench - Table Size
 my $table_size = $cnf_file->{sysbench}->{table_size};
 if($table_size){
@@ -329,7 +337,7 @@ if ($sysbench_version eq "0.4x") {
 
 # Sysbench Version 0.5x
 if ($sysbench_version eq "0.5x") {
-    my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size prepare";  
+    my $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size prepare";  
     my $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
         print "ERROR: Sysbench Error with this call : $cmd\n";
@@ -339,7 +347,7 @@ if ($sysbench_version eq "0.5x") {
     }
     
     foreach my $threads (@numThreads){
-        $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
+        $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --oltp-tables-count=$tables_count --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
         my $result = `$cmd`;
         
         if ($option_verbose) {
@@ -394,7 +402,7 @@ if ($sysbench_version eq "0.5x") {
         }
     }
     
-    $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size cleanup";  
+    $cmd = "sysbench --test=$oltp_lua --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size cleanup";  
     $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
         print "ERROR: Sysbench Error with this call : $cmd\n";
