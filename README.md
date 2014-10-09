@@ -124,10 +124,13 @@ table_engine=InnoDB
 
 ## MySQL User and Schema
 
-Before started BenchBox, you should create the Sysbench user and schema (as specified in the benchbox.conf): 
+Before started BenchBox, you should create the Sysbench user and schema on the target databases (as specified in the benchbox.conf): 
 
 ```
 CREATE DATABASE sysbench;
+```
+
+```
 GRANT ALL PRIVILEGES ON sysbench.* TO sysbench;
 ```
 
