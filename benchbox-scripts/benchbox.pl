@@ -328,7 +328,7 @@ if ($sysbench_version =~ m/0.5/) {
             $wrs->{$threads}->{avg} = Utils->getAVG(\@wrs);
             $rt->{$threads}->{avg} = Utils->getAVG(\@rt);
             
-            print "INFO: Run with $threads Thread(s)\n";
+            print "INFO: Done with $threads Thread(s)\n";
         }
     }
     
