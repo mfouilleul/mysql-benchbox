@@ -1,7 +1,7 @@
 # About
 
 BenchBox allows you to automate, archive and visualize your MySQL benchmarks did with SysBench (oltp tests).
-It is composed by a set of Perl scripts and a Web Interface. The SysBench versions currently supported by BenchBox are 0.4x and 0.5.
+It is composed by a set of Perl scripts and a Web Interface. The SysBench version currently supported by BenchBox is 0.5.
 
 ![Charts](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/2.png)
 
@@ -20,7 +20,7 @@ Find official releases in [https://github.com/mfouilleul/benchbox/releases](http
 BenchBox is based on SysBench, the versions currently supported are SysBench 0.4x and SysBench 0.5 (Recommended).
 
 Prerequisites for BenchBox Perl Scripts:
-- SysBench 0.4x or higher
+- SysBench 0.5
 - Perl v5.8 or higher
 - Perl modules DBI and DBD::mysql
 
@@ -76,13 +76,12 @@ The configuration file is splitted in three parts:
 vi benchbox.conf
 
 [benchbox]
-num_threads=2,4,6,8,16,32,64,128,256
+num_threads=1,2,4,6,8,16,32,64,128
 output=../json
 show_variables=1
 
 [sysbench]
 oltp_lua=/usr/local/sysbench/tests/db/oltp.lua
-read_only=on
 tables_count=4
 table_size=100000
 report_interval=1
@@ -106,7 +105,6 @@ table_engine=InnoDB
 **sysbench**
 
 - oltp_lua: SysBench OLTP lua script
-- read_only: Enable/Disable SELECT only on SysBench transactions
 - tables_count: Number of tables on which Sysbench will work
 - table_size: 
 - report_interval: Number of seconds between two SysBench checkpoints
@@ -138,7 +136,7 @@ GRANT ALL PRIVILEGES ON sysbench.* TO sysbench;
 
 ```
 # perl benchbox.pl --help
-BenchBox v0.3
+BenchBox v0.4
 
 Usage: perl benchbox.pl [OPTIONS]
 
@@ -151,13 +149,23 @@ Usage: perl benchbox.pl [OPTIONS]
 
 ### Run
 ```
-# perl benchbox.pl -n "My First Test"
-Sysbench Version: 0.5x; Name: My First Test; Threads: 3,4,5; Outfile: ../json/20140914120605_127.0.0.1_3306_my_first_test.json
-INFO: Prepare
-INFO: Run with 3 Thread(s)
+# perl benchbox.pl
+
+/!\ Safety Warning /!\ You should not run your benchmarks on production servers
+
+Sysbench Version: 0.5; Name: Unnamed; Outfile: ../json/20141001100253_127.0.0.1_3306.json
+----
+INFO: Prepare SysBench Tables
+INFO: Run with 1 Thread(s)
+INFO: Run with 2 Thread(s)
 INFO: Run with 4 Thread(s)
-INFO: Run with 5 Thread(s)
-INFO: Cleanup
+INFO: Run with 8 Thread(s)
+INFO: Run with 16 Thread(s)
+INFO: Run with 32 Thread(s)
+INFO: Run with 64 Thread(s)
+INFO: Run with 128 Thread(s)
+INFO: Cleanup SysBench Tables
+----
 ```
 
 # BenchBox Web Interface
