@@ -147,7 +147,7 @@ if($lua_script){
 }
 
 # Sysbench - Table Count
-my $tables_count = $cnf_file->{sysbench}->{table_count};
+my $tables_count = $cnf_file->{sysbench}->{tables_count};
 if($tables_count){
     Utils->trimText(\$tables_count);
 }else{
