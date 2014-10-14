@@ -19,18 +19,16 @@ if (!`which sysbench`) {
     exit 1;
 }
 
-my $sysbench_version;
+my $sysbench_version = `sysbench --version`;
 
-if (`sysbench --version` =~ m/0.5/) {
-    $sysbench_version = "0.5x";
-}elsif(`sysbench --version` =~ m/0.4/){
-    $sysbench_version = "0.4x";
+if ($sysbench_version =~ m/(0.5)/) {
+    $sysbench_version = $1;
 }else{
     print "ERROR: This Sysbench Version is not supported\n";
     exit 1;
 }
 
-my $version = "0.3";
+my $version = "0.4";
 
 my $ckpts = 1;
 
@@ -148,14 +146,6 @@ if($lua_script){
     $lua_script = "oltp";
 }
 
-# Sysbench - Read Only
-my $read_only = $cnf_file->{sysbench}->{read_only};
-if($read_only){
-    Utils->trimText(\$read_only);
-}else{
-    $read_only = "off"
-}
-
 # Sysbench - Table Count
 my $tables_count = $cnf_file->{sysbench}->{table_count};
 if($tables_count){
@@ -252,7 +242,6 @@ $OUTPUT->{info}->{hostname} = $db_host;
 $OUTPUT->{info}->{port} = $db_port;
 $OUTPUT->{info}->{datetime} = Utils->getNow();
 $OUTPUT->{info}->{threads} = \@numThreads;
-$OUTPUT->{info}->{read_only} = $read_only;
 $OUTPUT->{info}->{report_interval} = $report_interval;
 $OUTPUT->{info}->{max_time} = $max_time;
 
@@ -275,67 +264,9 @@ $OUTPUT->{variables} = \@variables;
 
 my ($tps, $rds, $wrs, $rt);
 
-print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Threads: " . join(",",@numThreads) . "; Outfile: $output_file\n";
+print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Outfile: $output_file\n";
 
-# Sysbench Version 0.4x
-if ($sysbench_version eq "0.4x") {
-    my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size prepare";  
-    my $result = `$cmd`;
-    if ($result =~ m/(ERROR|FATAL)/) {
-        print "ERROR: Sysbench Error with this call : $cmd\n";
-        exit 1;
-    }else{
-        print "INFO: Prepare\n";
-    }
-    
-    foreach my $threads (@numThreads){
-        my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --num-threads=$threads $options run";  
-        $result = `$cmd`;
-        if ($option_verbose) {
-            print $result;
-        }
-        
-        if ($result =~/(ERROR|FATAL)/i) {
-            print "ERROR: Sysbench Error with this call : $cmd\n";
-            exit 1;
-        }else{
-            $result =~ /total time:\s*(\d+\.?\d*)s/;
-            my $total_time = $1;
-            $result =~ /read:\s*(\d+)/;
-            my $rds_ = $1;
-            $rds_ = floor($rds_ / $total_time);
-            $rds->{$threads}->{full} = $rds_;
-            $rds->{$threads}->{avg} = $rds_;
-            $result =~ /write:\s*(\d+)/;
-            my $wrs_ = $1;
-            $wrs_ = floor($wrs_ / $total_time);
-            $wrs->{$threads}->{full} = $wrs_;
-            $wrs->{$threads}->{avg} = $wrs_;
-            $result =~ /transactions:.*\((\d+\.\d+)\s/;
-            my $tps_ = $1;
-            $tps->{$threads}->{full} = $tps_;
-            $tps->{$threads}->{avg} = $tps_;
-            $result =~ /approx\..*(\d+\.\d+)ms/;
-            my $rt_ = $1;
-            $rt->{$threads}->{full} = $rt_;
-            $rt->{$threads}->{avg} = $rt_;
-            
-            print "INFO: Done with $threads Thread(s)\n";
-        }
-    }
-    
-    $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-table-size=$table_size cleanup";  
-    $result = `$cmd`;
-    if ($result =~ m/(ERROR|FATAL)/) {
-        print "ERROR: Sysbench Error with this call : $cmd\n";
-        exit 1;
-    }else{
-        print "INFO: Cleanup\n";
-    }
-}
-
-# Sysbench Version 0.5x
-if ($sysbench_version eq "0.5x") {
+if ($sysbench_version =~ m/0.5/) {
     my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size prepare";  
     my $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
@@ -346,7 +277,7 @@ if ($sysbench_version eq "0.5x") {
     }
     
     foreach my $threads (@numThreads){
-        $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-read-only=$read_only --oltp-tables-count=$tables_count --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
+        $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-tables-count=$tables_count --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
         my $result = `$cmd`;
         
         if ($option_verbose) {
@@ -387,10 +318,10 @@ if ($sysbench_version eq "0.5x") {
                 $ckpts = $lines_ckpt;
             }
             
-            $tps->{$threads}->{full} = \@tps;
-            $rds->{$threads}->{full} = \@rds;
-            $wrs->{$threads}->{full} = \@wrs;
-            $rt->{$threads}->{full} = \@rt;
+            #$tps->{$threads}->{full} = \@tps;
+            #$rds->{$threads}->{full} = \@rds;
+            #$wrs->{$threads}->{full} = \@wrs;
+            #$rt->{$threads}->{full} = \@rt;
             
             $tps->{$threads}->{avg} = Utils->getAVG(\@tps);
             $rds->{$threads}->{avg} = Utils->getAVG(\@rds);
