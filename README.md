@@ -1,6 +1,6 @@
 # About
 
-BenchBox allows you to automate, archive and visualize your MySQL benchmarks did with SysBench (oltp tests).
+BenchBox allows you to automate, archive and visualize your MySQL benchmarks did with SysBench.
 It is composed by a set of Perl scripts and a Web Interface. The SysBench version currently supported by BenchBox is 0.5.
 
 ![Charts](https://raw.githubusercontent.com/mfouilleul/BenchBox/master/screenshots/2.png)
@@ -17,7 +17,7 @@ Find official releases in [https://github.com/mfouilleul/benchbox/releases](http
 
 # Requirements
 
-BenchBox is based on SysBench, the versions currently supported are SysBench 0.4x and SysBench 0.5 (Recommended).
+BenchBox is based on SysBench, the version currently supported is SysBench 0.5.
 
 Prerequisites for BenchBox Perl Scripts:
 - SysBench 0.5
