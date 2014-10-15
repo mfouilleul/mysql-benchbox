@@ -40,7 +40,8 @@ function getCharts(filename){
 		$("#context_table > tbody").append("<tr><td>Hostname</td><td>" + json.info.hostname + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Port</td><td>" + json.info.port + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Threads</td><td>" + json.info.threads.toString() + "</td></tr>");
-		$("#context_table > tbody").append("<tr><td>Read Only</td><td>" + json.info.read_only + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Tables Count</td><td>" + json.info.tables_count + "</td></tr>");
+		$("#context_table > tbody").append("<tr><td>Table Size</td><td>" + json.info.table_size + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Report Interval (in sec)</td><td>" + json.info.report_interval + "</td></tr>");
 		$("#context_table > tbody").append("<tr><td>Max Time (in sec)</td><td>" + json.info.max_time + "</td></tr>");
 		
