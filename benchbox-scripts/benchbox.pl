@@ -264,7 +264,7 @@ $OUTPUT->{variables} = \@variables;
 
 my ($tps, $rds, $wrs, $rt);
 
-print "\n/!\ Safety Warning /!\ You should not run your benchmarks on production servers\n\n";
+print "\n/!\\ Safety Warning /!\\ You should not run your benchmarks on production servers\n\n";
 
 print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Outfile: $output_file\n";
 
