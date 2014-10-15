@@ -270,7 +270,7 @@ if ($sysbench_version =~ m/0.5/) {
     my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size prepare";  
     my $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
-        print "ERROR: Sysbench Error with this call : $cmd\n";
+        print $result;
         exit 1;
     }else{
         print "INFO: Prepare\n";
@@ -285,7 +285,7 @@ if ($sysbench_version =~ m/0.5/) {
         }
         
         if ($result =~/(ERROR|FATAL)/i) {
-            print "ERROR: Sysbench Error with this call : $cmd\n";
+            print $result;
             exit 1;
         }else{
             my @lines = split("\n", $result);
@@ -335,7 +335,7 @@ if ($sysbench_version =~ m/0.5/) {
     $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size cleanup";  
     $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
-        print "ERROR: Sysbench Error with this call : $cmd\n";
+        print $result;
         exit 1;
     }else{
         print "INFO: Cleanup\n";
