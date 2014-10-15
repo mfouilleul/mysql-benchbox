@@ -264,6 +264,8 @@ $OUTPUT->{variables} = \@variables;
 
 my ($tps, $rds, $wrs, $rt);
 
+print "\n/!\ Safety Warning /!\ You should not run your benchmarks on production servers\n\n";
+
 print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Outfile: $output_file\n";
 
 if ($sysbench_version =~ m/0.5/) {
@@ -273,7 +275,7 @@ if ($sysbench_version =~ m/0.5/) {
         print $result;
         exit 1;
     }else{
-        print "INFO: Prepare\n";
+        print "----\nINFO: Prepare SysBench Tables\n";
     }
     
     foreach my $threads (@numThreads){
@@ -338,7 +340,7 @@ if ($sysbench_version =~ m/0.5/) {
         print $result;
         exit 1;
     }else{
-        print "INFO: Cleanup\n";
+        print "----\nINFO: Cleanup SysBench Tables\n";
     }
 }
 
