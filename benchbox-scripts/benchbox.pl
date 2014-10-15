@@ -244,6 +244,8 @@ $OUTPUT->{info}->{datetime} = Utils->getNow();
 $OUTPUT->{info}->{threads} = \@numThreads;
 $OUTPUT->{info}->{report_interval} = $report_interval;
 $OUTPUT->{info}->{max_time} = $max_time;
+$OUTPUT->{info}->{tables_count} = $tables_count;
+$OUTPUT->{info}->{table_size} = $table_size;
 
 
 # Show Variables	
