@@ -39,6 +39,7 @@ my $script_path = $FindBin::Bin . "/";
 
 my $option_config = $script_path . "/benchbox.conf";
 my $option_name = undef;
+my $option_action = "auto";
 my $option_verbose = undef;
 my $option_version = undef;
 my $option_help = undef;
@@ -46,6 +47,7 @@ my $option_help = undef;
 GetOptions (
     'c|config=s' => \$option_config,
     'v|verbose' => \$option_verbose,
+    'a|action=s' => \$option_action,
     'version' => \$option_version,
     'n|name=s' => \$option_name,
     'h|help' => \$option_help
@@ -62,6 +64,18 @@ if($option_help){
 }
 
 my $option_name_tr = "";
+
+if($option_action){
+    
+    if ($option_action !~ m/(auto|prepare|run|cleanup)/) {
+        print "ERROR: uknown action \"$option_action\"\n";
+        exit 1;
+    }
+    
+}else{
+    print "ERROR: Please specify an action (auto, prepare, run or cleanup)\n";
+    exit 1;
+}
 
 if ($option_name) {
     $option_name_tr = $option_name;
@@ -268,20 +282,24 @@ my ($tps, $rds, $wrs, $rt);
 
 print "\n/!\\ Safety Warning /!\\ You should not run your benchmarks on production servers\n\n";
 
-print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Outfile: $output_file\n";
+print "Sysbench Version: $sysbench_version; Name: " . $option_name . "; Outfile: $output_file\n----\n";
 
 if ($sysbench_version =~ m/0.5/) {
-    my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size prepare";  
-    my $result = `$cmd`;
-    if ($result =~ m/(ERROR|FATAL)/) {
-        print $result;
-        exit 1;
-    }else{
-        print "----\nINFO: Prepare SysBench Tables\n";
+    if ($option_action eq "auto" || $option_action eq "prepare") {
+   	my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size prepare";  
+    	my $result = `$cmd`;
+    	if ($result =~ m/(ERROR|FATAL)/) {
+        	print $result;
+        	exit 1;
+    	}else{
+       		print "INFO: Prepare SysBench Tables : OK\n";
+    	}
     }
-    
+
+    if ($option_action eq "auto" || $option_action eq "run") {
+     
     foreach my $threads (@numThreads){
-        $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-tables-count=$tables_count --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
+        my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine --oltp-tables-count=$tables_count --num-threads=$threads --report-interval=$report_interval --max-time=$max_time $options run";  
         my $result = `$cmd`;
         
         if ($option_verbose) {
@@ -335,14 +353,17 @@ if ($sysbench_version =~ m/0.5/) {
             print "INFO: Done with $threads Thread(s)\n";
         }
     }
-    
-    $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size cleanup";  
+    }
+
+    if ($option_action eq "auto" || $option_action eq "cleanup") {
+    my $cmd = "sysbench --test=$lua_script --mysql-host=$db_host --mysql-port=$db_port --mysql-user=$db_user --mysql-password=$db_password --mysql-db=$db_db --mysql-table-engine=$db_engine $options --oltp-tables-count=$tables_count --oltp-table-size=$table_size cleanup";  
     $result = `$cmd`;
     if ($result =~ m/(ERROR|FATAL)/) {
         print $result;
         exit 1;
     }else{
-        print "----\nINFO: Cleanup SysBench Tables\n";
+        print "INFO: Cleanup SysBench Tables : OK\n";
+    }
     }
 }
 
@@ -351,6 +372,8 @@ $OUTPUT->{bench}->{tps} = $tps;
 $OUTPUT->{bench}->{rds} = $rds;
 $OUTPUT->{bench}->{wrs} = $wrs;
 $OUTPUT->{bench}->{rt} = $rt;
+
+print "----\n";
 
 # Write Output
 open (OUTFILE, ">>$output_file");
