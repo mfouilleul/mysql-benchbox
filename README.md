@@ -141,6 +141,7 @@ BenchBox v0.4
 Usage: perl benchbox.pl [OPTIONS]
 
   -h, --help                     Display this help.
+  -a=STRING,--action=STRING      BenchBox Action: [auto], prepare, cleanup, run.
   -n=STRING,--name=STRING        Name your bench.
   -c, --config                   Manually specify a benchbox.conf file (Default value is <benchbox dir>/benchbox.conf).
   -v, --version                  Output version information.
