@@ -36,6 +36,7 @@ sub printHelp{
     print "Usage: perl benchbox.pl [OPTIONS]\n\n";
     
     print "  -h, --help                     Display this help.\n";
+    print "  -a=STRING,--action=STRING      BenchBox Action: [auto], prepare, cleanup, run.\n";
     print "  -n=STRING,--name=STRING        Name your bench.\n";
     print "  -c, --config                   Manually specify a benchbox.conf file (Default value is <benchbox dir>/benchbox.conf).\n";
     print "  -v, --version                  Output version information.\n";
